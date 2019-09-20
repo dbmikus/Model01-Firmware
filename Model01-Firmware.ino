@@ -163,8 +163,8 @@ enum { PRIMARY, NUMPAD, FUNCTION }; // layers
 // #define PRIMARY_KEYMAP_DVORAK
 // #define PRIMARY_KEYMAP_CUSTOM
 
-#define THUMB_KEYS_LEFT Key_LeftControl, Key_Backspace, Key_LeftShift, Key_LeftGui
-#define THUMB_KEYS_RIGHT Key_LeftAlt, Key_RightShift, Key_Spacebar, Key_RightControl
+#define THUMB_KEYS_LEFT Key_LeftControl, Key_Backspace, Key_LeftGui, Key_LeftShift
+#define THUMB_KEYS_RIGHT Key_RightShift, Key_LeftAlt, Key_Spacebar, Key_RightControl
 #define BUTTERFLY_KEY Key_RightAlt
 
 /* This comment temporarily turns off astyle's indent enforcement
