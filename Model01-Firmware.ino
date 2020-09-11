@@ -105,10 +105,10 @@ enum { MACRO_VERSION_INFO,
   * defined as part of the USB HID Keyboard specification. You can find the names
   * (if not yet the explanations) for all the standard `Key_` defintions offered by
   * Kaleidoscope in these files:
-  *    https://github.com/keyboardio/Kaleidoscope/blob/master/src/key_defs_keyboard.h
-  *    https://github.com/keyboardio/Kaleidoscope/blob/master/src/key_defs_consumerctl.h
-  *    https://github.com/keyboardio/Kaleidoscope/blob/master/src/key_defs_sysctl.h
-  *    https://github.com/keyboardio/Kaleidoscope/blob/master/src/key_defs_keymaps.h
+  *    https://github.com/keyboardio/Kaleidoscope/blob/master/src/kaleidoscope/key_defs_keyboard.h
+  *    https://github.com/keyboardio/Kaleidoscope/blob/master/src/kaleidoscope/key_defs_consumerctl.h
+  *    https://github.com/keyboardio/Kaleidoscope/blob/master/src/kaleidoscope/key_defs_sysctl.h
+  *    https://github.com/keyboardio/Kaleidoscope/blob/master/src/kaleidoscope/key_defs_keymaps.h
   *
   * Additional things that should be documented here include
   *   using ___ to let keypresses fall through to the previously active layer
@@ -166,6 +166,7 @@ enum { PRIMARY, NUMPAD, FUNCTION }; // layers
 #define THUMB_KEYS_LEFT Key_LeftControl, Key_Backspace, Key_LeftGui, Key_LeftShift
 #define THUMB_KEYS_RIGHT Key_RightShift, Key_LeftAlt, Key_Spacebar, Key_RightControl
 #define BUTTERFLY_KEY Key_RightAlt
+
 
 /* This comment temporarily turns off astyle's indent enforcement
  *   so we can make the keymaps actually resemble the physical key layout better
@@ -307,12 +308,12 @@ static void anyKeyMacro(uint8_t keyState) {
   static Key lastKey;
   bool toggledOn = false;
   if (keyToggledOn(keyState)) {
-    lastKey.keyCode = Key_A.keyCode + (uint8_t)(millis() % 36);
+    lastKey.setKeyCode(Key_A.getKeyCode() + (uint8_t)(millis() % 36));
     toggledOn = true;
   }
 
   if (keyIsPressed(keyState))
-    kaleidoscope::hid::pressKey(lastKey, toggledOn);
+    Kaleidoscope.hid().keyboard().pressKey(lastKey, toggledOn);
 }
 
 
@@ -363,13 +364,10 @@ static kaleidoscope::plugin::LEDSolidColor solidViolet(130, 0, 120);
 void toggleLedsOnSuspendResume(kaleidoscope::plugin::HostPowerManagement::Event event) {
   switch (event) {
   case kaleidoscope::plugin::HostPowerManagement::Suspend:
-    LEDControl.set_all_leds_to({0, 0, 0});
-    LEDControl.syncLeds();
-    LEDControl.paused = true;
+    LEDControl.disable();
     break;
   case kaleidoscope::plugin::HostPowerManagement::Resume:
-    LEDControl.paused = false;
-    LEDControl.refreshAll();
+    LEDControl.enable();
     break;
   case kaleidoscope::plugin::HostPowerManagement::Sleep:
     break;
@@ -548,7 +546,7 @@ void setup() {
 
   // The LED Stalker mode has a few effects. The one we like is called
   // 'BlazingTrail'. For details on other options, see
-  // https://github.com/keyboardio/Kaleidoscope/blob/master/doc/plugin/LED-Stalker.md
+  // https://github.com/keyboardio/Kaleidoscope/blob/master/docs/plugins/LED-Stalker.md
   StalkerEffect.variant = STALKER(BlazingTrail);
 
   // We want to make sure that the firmware starts with LED effects off
