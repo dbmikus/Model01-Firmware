@@ -142,7 +142,7 @@ enum { MACRO_VERSION_INFO,
   *
   */
 
-enum { PRIMARY, NUMPAD, FUNCTION }; // layers
+enum { PRIMARY, NUMPAD, CMD_CENTER, FUNCTION }; // layers
 
 
 /**
@@ -172,6 +172,25 @@ enum { PRIMARY, NUMPAD, FUNCTION }; // layers
  *   so we can make the keymaps actually resemble the physical key layout better
  */
 // *INDENT-OFF*
+
+/**
+  * A template empty layer you can copy and fill in below:
+  *
+  * (___, ___, ___, ___, ___, ___, ___,
+  *  ___, ___, ___, ___, ___, ___, ___,
+  *  ___, ___, ___, ___, ___, ___,
+  *  ___, ___, ___, ___, ___, ___, ___,
+  *  ___, ___, ___, ___,
+  *  ___,
+
+  *  ___, ___, ___, ___, ___, ___, ___,
+  *  ___, ___, ___, ___, ___, ___, ___,
+  *  ___, ___, ___, ___, ___, ___,
+  *  ___, ___, ___, ___, ___, ___, ___,
+  *  ___, ___, ___, ___,
+  *  ___),
+  *
+  */
 
 KEYMAPS(
 
@@ -265,6 +284,21 @@ KEYMAPS(
    ___, ___, ___, ___,
    ___),
 
+  [CMD_CENTER] =  KEYMAP_STACKED
+  (___, ___,         ___, ___, ___, ___, ___,
+   ___, ___,         ___, ___, ___, ___, ___,
+   ___, ___,         ___, ___, ___, ___,
+   ___, ___,         ___, ___, ___, ___, UnlockLayer(CMD_CENTER),
+   ___, Key_LeftAlt, ___, ___,
+   ___,
+
+   Key_Z, ___, ___, ___, ___, ___, ___,
+   ___, ___, ___, ___, ___, ___, ___,
+   ___, ___, ___, ___, ___, ___,
+   ___, ___, ___, ___, ___, ___, ___,
+   ___, ___, ___, ___,
+   ___),
+
   [FUNCTION] =  KEYMAP_STACKED
   (___,      Key_F1,           Key_F2,      Key_F3,     Key_F4,        Key_F5,           Key_CapsLock,
    Key_Tab,  ___,              Key_mouseUp, ___,        Key_mouseBtnR, Key_mouseWarpEnd, Key_mouseWarpNE,
@@ -279,7 +313,7 @@ KEYMAPS(
    Key_PcApplication,          Consumer_Mute,          Consumer_VolumeDecrement, Consumer_VolumeIncrement, ___,             Key_Backslash,    Key_Pipe,
    ___, ___, Key_Enter, ___,
    ___)
-) // KEYMAPS(
+) // end of KEYMAPS( ... )
 
 /* Re-enable astyle's indent enforcement */
 // *INDENT-ON*
@@ -414,18 +448,33 @@ static void enterHardwareTestMode(uint8_t combo_index) {
   HardwareTestMode.runTests();
 }
 
+static void enterCmdCenter(uint8_t combo_index) {
+  if (Layer.isActive(CMD_CENTER)) {
+    Layer.deactivate(CMD_CENTER);
+  } else {
+    Layer.activate(CMD_CENTER);
+  }
+}
+
 
 /** Magic combo list, a list of key combo and action pairs the firmware should
  * recognise.
  */
-USE_MAGIC_COMBOS({.action = toggleKeyboardProtocol,
-                  // Left Fn + Esc + Shift
-                  .keys = { R3C6, R2C6, R3C7 }
-}, {
-  .action = enterHardwareTestMode,
-  // Left Fn + Prog + LED
-  .keys = { R3C6, R0C0, R0C6 }
-});
+USE_MAGIC_COMBOS(
+  {
+    .action = toggleKeyboardProtocol,
+    // Left Fn + Esc + Shift
+    .keys = { R3C6, R2C6, R3C7 }
+  }, {
+    .action = enterHardwareTestMode,
+    // Left Fn + Prog + LED
+    .keys = { R3C6, R0C0, R0C6 }
+  }, {
+    .action = enterCmdCenter,
+    // Left Fn + Left Ctrl + Right Fn + Right Ctrl
+    .keys = { R3C6, R0C7, R3C9, R0C8 }
+  }
+);
 
 // First, tell Kaleidoscope which plugins you want to use.
 // The order can be important. For example, LED effects are
